@@ -23,29 +23,26 @@ class Graph:
         if vertex not in self.graph:
             self.graph[vertex] = []
     
-    def add_edge(self, src, dest):
+    def add_edge(self, src, dest, weight=1):
         if src not in self.graph:
             self.add_vertex(src)
         if dest not in self.graph:
             self.add_vertex(dest)
-        self.graph[src].append(dest)
+        self.graph[src].append((dest, weight))  # Store edge as a tuple (destination, weight)
         if not self.directed:
-            self.graph[dest].append(src)
+            self.graph[dest].append((src, weight))  # Add reverse edge for undirected graphs
     
     def remove_edge(self, src, dest):
         if src in self.graph:
-            if dest in self.graph[src]:
-                self.graph[src].remove(dest)
-        if not self.directed:
-            if dest in self.graph and src in self.graph[dest]:
-                self.graph[dest].remove(src)
+            self.graph[src] = [edge for edge in self.graph[src] if edge[0] != dest]
+        if not self.directed and dest in self.graph:
+            self.graph[dest] = [edge for edge in self.graph[dest] if edge[0] != src]
     
     def remove_vertex(self, vertex):
         if vertex in self.graph:
             # Remove any edges from other vertices to this one
             for adj in list(self.graph):
-                if vertex in self.graph[adj]:
-                    self.graph[adj].remove(vertex)
+                self.graph[adj] = [edge for edge in self.graph[adj] if edge[0] != vertex]
             # Remove the vertex entry
             del self.graph[vertex]
     
@@ -62,6 +59,10 @@ class Graph:
 g = Graph(directed=True)
 g.add_vertex('A')
 g.add_vertex('B')
-g.add_edge('A', 'B')
-g.add_edge('A', 'C')
+g.add_vertex('C')
+g.add_vertex('D')
+g.add_edge('A', 'B', 5)  # Add edge with weight 5
+g.add_edge('A', 'C', 3)  # Add edge with weight 3
+g.add_edge('B', 'D', 2)  # Add edge with weight 2
+g.remove_vertex('F')
 print(g)
