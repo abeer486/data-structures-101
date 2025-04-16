@@ -18,6 +18,8 @@ class Graph:
         self.directed = directed
     
     def add_vertex(self, vertex):
+        if not isinstance(vertex, str):
+            raise ValueError("Vertex must be a string")
         if vertex not in self.graph:
             self.graph[vertex] = []
     
